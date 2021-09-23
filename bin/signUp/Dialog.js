@@ -49,13 +49,10 @@ class Dialog{
             await this.sendMessage(messages[this.partCounter-1]);
             return;
         }
-
-        this.answers.push(message.body);
-        if(this.partCounter===4){
+        if(this.partCounter===5){
             this.answers.push(message.from.split('@')[0])
-        }else if(this.partCounter===5){
             let output = '';
-            for(let j=0;j<this.answers.length;j++){
+            for(let j=1;j<this.answers.length;j++){
                 output += this.answers[j]+'\n';
             }
             for(let i=0;i<admins.length;i++){
@@ -64,6 +61,8 @@ class Dialog{
             }
             this.dialogOver();
             return;
+        }else{
+            this.answers.push(message.body);
         }
         await this.sendMessage(messages[this.partCounter])
         this.partCounter++;
@@ -144,6 +143,7 @@ class Dialog{
     async dialogOver(){
         let output = 'תודה רבה על שנרשמתם ל brave IL.\nבמידה ותימצאו מתאימים תצורפו לקבוצה ייעודית.';
         await this.sendMessage(output);
+        dialogHandler.dialogMap.delete(this.chatId);
         /*await this.db.updateGroups();
         let server = new Server();
         let res = await server.createUser(this.answers[1], this.answers[2], this.answers[3], this.answers[4], this.answers[5]);
