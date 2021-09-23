@@ -1,23 +1,18 @@
 const Database = require('../Database')
 const dialogHandler = require('../../lib/handlers/dialogHandler');
-const {List} = require('whatsapp-web.js');
+const {List, MessageMedia} = require('whatsapp-web.js');
 const Server = require('../Server');
 let sections = [{title:'איזורים',rows:[{title:'מרכז'},{title:'צפון'},{title:'ירושלים'},{title:'דרום'}]}];
 const list = new List('אנא בחרו את איזור מגוריכם','לבחירה',sections,'איזור מגורים','פוטר');
+const pdfPath = require("../../config/bot.json").pdfFile;
 const messages = [
     'היי, ברוכים הבאים לצ\'אט ההתנדבות של מצעד הגבורה!\nאנו שמחים שבחרתם להתנדב ולתרום מזמנכם למטרה נעלה זו.\nכדי להתחיל אנו זקוקים למספר פרטים\n\nשם פרטי:',
     'שם משפחה:',
     list,
-    'מייל:'
+    'מייל:',
+    MessageMedia.fromFilePath(pdfPath)
 ];
-const parts = [
-    'start',
-    'firstName',
-    'lastName',
-    'city',
-    'email',
-    'end'
-];
+const admins = require('../../config/admins');
 
 
 
@@ -46,20 +41,28 @@ class Dialog{
     /**
      * Prepares the outside given data from processing.
      *
-     * @param {Message} message
+     * @param {WAWebJS.Message} message
      */
     async procMessage(message) {
 
-        if(!this.validate(message) || (this.partCounter===3 && message.type!=='list_response')){
+        if(!this.validate(message)){
             await this.sendMessage(messages[this.partCounter-1]);
             return;
         }
 
-        let obj = {};
         this.answers.push(message.body);
         if(this.partCounter===4){
             this.answers.push(message.from.split('@')[0])
-            await this.dialogOver();
+        }else if(this.partCounter===5){
+            let output = '';
+            for(let j=0;j<this.answers.length;j++){
+                output += this.answers[j]+'\n';
+            }
+            for(let i=0;i<admins.length;i++){
+                await this.client.sendMessage(admins[i], await message.downloadMedia());
+                await this.client.sendMessage(admins[i], output);
+            }
+            this.dialogOver();
             return;
         }
         await this.sendMessage(messages[this.partCounter])
@@ -81,7 +84,7 @@ class Dialog{
     /**
      * validate message info.
      *
-     * @param {Message} message
+     * @param {WAWebJS.Message} message
      */
     validate(message){
         switch (this.partCounter){
@@ -89,10 +92,15 @@ class Dialog{
                 return true;
             case 1:
             case 2:
-            case 3:
                 return this.validateName(message.body);
+            case 3:
+                return message.type==='list_response';
             case 4:
                 return this.validateMail(message.body);
+            case 5:
+                return message.type==="document";
+
+
         }
 
     }
@@ -136,7 +144,7 @@ class Dialog{
     async dialogOver(){
         let output = 'תודה רבה על שנרשמתם ל brave IL.\nבמידה ותימצאו מתאימים תצורפו לקבוצה ייעודית.';
         await this.sendMessage(output);
-        await this.db.updateGroups();
+        /*await this.db.updateGroups();
         let server = new Server();
         let res = await server.createUser(this.answers[1], this.answers[2], this.answers[3], this.answers[4], this.answers[5]);
         if (res.isAxiosError){
@@ -145,7 +153,9 @@ class Dialog{
             await this.sendMessage("אימייל זה תפוס.\n אנא נסה מייל אחר:");
             return;
         }
-        dialogHandler.dialogMap.delete(this.chatId);
+        await this.sendMessage();*/
+
+        /*dialogHandler.dialogMap.delete(this.chatId);
         //adding user to fit group.
         let groupsId = await this.db.getGroupsByPlace(this.answers[3]);
         let groups = [];
@@ -164,7 +174,7 @@ class Dialog{
 
         // await fitGroup.addParticipants([this.answers[5]+"@c.us"]);
         const inviteCode = await fitGroup.getInviteCode();
-        await this.client.sendMessage(this.answers[5]+"@c.us", "https://chat.whatsapp.com/"+inviteCode, {linkPreview: true});
+        await this.client.sendMessage(this.answers[5]+"@c.us", "https://chat.whatsapp.com/"+inviteCode, {linkPreview: true});*/
     }
 
 
