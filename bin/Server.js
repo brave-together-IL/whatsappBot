@@ -260,6 +260,10 @@ class Server {
         return res.data;
     }
 
+
+    async participateEvent(){
+
+    }
 }
 module.exports = Server;
 /*

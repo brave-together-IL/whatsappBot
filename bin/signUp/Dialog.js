@@ -28,14 +28,11 @@ class Dialog{
      *
      * @param {WAWebJS.Client} client
      * @param {string} chatId
-     * @param {Database} db
      */
-    constructor(client, chatId, db) {
+    constructor(client, chatId) {
         this.client = client;
         this.chatId = chatId;
-        // Cap question count.
         this.partCounter = 0;
-        this.db = db;
     }
 
     /**
@@ -124,19 +121,6 @@ class Dialog{
     }
 
     /**
-     *
-     * @param {GroupChat[]}groups
-     */
-    findFitGroup(groups){
-        for(let i=0;i<groups.length;i++){
-            if(groups[i].groupMetadata.participants.length<6){
-                return groups[i];
-            }
-        }
-        return undefined;
-    }
-
-    /**
      * Dialog over.
      *
      */
@@ -144,37 +128,6 @@ class Dialog{
         let output = 'תודה רבה על שנרשמתם ל brave IL.\nבמידה ותימצאו מתאימים תצורפו לקבוצה ייעודית.';
         await this.sendMessage(output);
         dialogHandler.dialogMap.delete(this.chatId);
-        /*await this.db.updateGroups();
-        let server = new Server();
-        let res = await server.createUser(this.answers[1], this.answers[2], this.answers[3], this.answers[4], this.answers[5]);
-        if (res.isAxiosError){
-            this.answers.splice(3, 2);
-            this.partCounter--;
-            await this.sendMessage("אימייל זה תפוס.\n אנא נסה מייל אחר:");
-            return;
-        }
-        await this.sendMessage();*/
-
-        /*dialogHandler.dialogMap.delete(this.chatId);
-        //adding user to fit group.
-        let groupsId = await this.db.getGroupsByPlace(this.answers[3]);
-        let groups = [];
-        for (let i =0;i<groupsId.length;i++){
-            try {
-                groups.push(await this.client.getChatById(groupsId[i]));
-            }catch(err){
-            }
-        }
-        let fitGroup = this.findFitGroup(groups);
-        if (!fitGroup){
-            const res = await this.client.createGroup(this.answers[3], [this.answers[5]+"@c.us"]);
-            this.db.addGroup(res.gid._serialized, this.answers[3]);
-            return;
-        }
-
-        // await fitGroup.addParticipants([this.answers[5]+"@c.us"]);
-        const inviteCode = await fitGroup.getInviteCode();
-        await this.client.sendMessage(this.answers[5]+"@c.us", "https://chat.whatsapp.com/"+inviteCode, {linkPreview: true});*/
     }
 
 

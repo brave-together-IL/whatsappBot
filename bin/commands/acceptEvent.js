@@ -1,24 +1,43 @@
+const Server = require("../Server");
+
+
 /**
  *
  * @param {WAWebJS.Message} message
  * @param {WAWebJS.Client} client
  * @return {Promise<void>}
  */
-const Server = require("../Server");
+const accept = async(message, client)=>{
+
+}
+
+/**
+ *
+ * @param {WAWebJS.Message} message
+ * @param {WAWebJS.Client} client
+ * @return {Promise<void>}
+ */
+const decline = async(message, client)=>{
+
+}
 
 
+/**
+ *
+ * @param {WAWebJS.Message} message
+ * @param {WAWebJS.Client} client
+ * @return {Promise<void>}
+ */
 const procCommand = async (message, client) =>{
     const server = new Server();
     switch (message.body){
         case 'אשר':
-            //TODO: update participation
-            break;
+            await accept(message, client);
+            return;
         case 'בטל':
-            //TODO:update participation
-            console.log('בטל');
-            break;
+            await decline(message, client);
+            return;
     }
-    await message.reply("נרשמת בהצלחה");
 }
 
 module.exports = procCommand;

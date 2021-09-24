@@ -45,8 +45,6 @@ const approved = async (message, client, db)=>{
     }
     const answers = infoMessage.body.split("\n").splice(5, 1);
 
-
-    console.log(answers);
     await db.updateGroups();
     let server = new Server();
     let res = await server.createUser(answers[0], answers[1], answers[2], answers[3], answers[4]);
@@ -68,27 +66,12 @@ const approved = async (message, client, db)=>{
         db.addGroup(res.gid._serialized, answers[2]);
         return;
     }
-
     // await fitGroup.addParticipants([answers[5]+"@c.us"]);
     const inviteCode = await fitGroup.getInviteCode();
     await client.sendMessage(answers[4]+"@c.us", "https://chat.whatsapp.com/"+inviteCode, {linkPreview: true});
 
 }
 
-/**
-*
-* @param {WAWebJS.Message} message
-* @param {WAWebJS.Client} client
-* @param {Database} db
-* @return {Promise<void>}
-*/
-
-const decline = async (message, client, db)=>{
-    const quoted = await message.getQuotedMessage();
-    if(!quoted || !quoted.fromMe){
-        return;
-    }
-}
 
 /**
  *
@@ -102,9 +85,6 @@ const procCommand = async (message, client, db)=>{
     switch (message.body){
         case 'אשר':
             await approved(message, client, db);
-            return;
-        case 'בטל':
-            await decline(message, client, db);
             return;
     }
 
