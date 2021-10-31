@@ -2,7 +2,11 @@ const Database = require('../Database')
 const dialogHandler = require('../../lib/handlers/dialogHandler');
 const {List, MessageMedia} = require('whatsapp-web.js');
 const Server = require('../Server');
-let sections = [{title:'איזורים',rows:[{title:'מרכז'},{title:'צפון'},{title:'ירושלים'},{title:'דרום'}]}];
+const areas = require('../../public/areas.json');
+const rows = areas.map(area=>{
+    return {'title': area}
+})
+let sections = [{title:'איזורים',rows:rows}];
 const list = new List('אנא בחרו את איזור מגוריכם','לבחירה',sections,'איזור מגורים','פוטר');
 const pdfPath = require("../../config/bot.json").pdfFile;
 const messages = [

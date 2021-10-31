@@ -43,7 +43,7 @@ const approved = async (message, client, db)=>{
     }else{
         infoMessage = quoted;
     }
-    const answers = infoMessage.body.split("\n").splice(5, 1);
+    const answers = infoMessage.body.split("\n").splice(0, 5);
 
     await db.updateGroups();
     let server = new Server();
@@ -60,7 +60,7 @@ const approved = async (message, client, db)=>{
         }catch(err){
         }
     }
-    let fitGroup = findFitGroup(groups);
+    let fitGroup = await findFitGroup(groups);
     if (!fitGroup){
         const res = await client.createGroup(answers[2], [answers[4]+"@c.us"]);
         db.addGroup(res.gid._serialized, answers[2]);
@@ -69,7 +69,6 @@ const approved = async (message, client, db)=>{
     // await fitGroup.addParticipants([answers[5]+"@c.us"]);
     const inviteCode = await fitGroup.getInviteCode();
     await client.sendMessage(answers[4]+"@c.us", "https://chat.whatsapp.com/"+inviteCode, {linkPreview: true});
-
 }
 
 

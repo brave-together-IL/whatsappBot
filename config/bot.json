@@ -6,5 +6,6 @@
       "headless": true,
       "executablePath": "chrome"
     }
-  }
+  },
+  "pdfFile":"C:\\Users\\alonp\\WebstormProjects\\braveBot\\public\\privacy_contract.pdf"
 }
