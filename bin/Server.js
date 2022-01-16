@@ -1,14 +1,6 @@
-
 const axios = require('axios');
 
 class Server {
-    constructor() {
-        this.token = '';
-        this.auth = {
-            username: 'alon@gmail.com',
-            password: 'azor'
-        };
-    }
 
     /**
      *
@@ -123,8 +115,7 @@ class Server {
             },
             params: {
                 'tags_any': tagsFormatted
-            },
-            auth: this.auth
+            }
         }
         let response = await axios.request(requestOptions).catch(err=>{
             console.log(err);
@@ -139,19 +130,6 @@ class Server {
     }
 
 
-    async refreshToken(){
-        const requestOptions = {
-            method: 'GET',
-            url: 'http://localhost:5000/token',
-            auth: this.auth
-        }
-        const res = await axios.request(requestOptions).catch(err=>console.log(err));
-        if (!res){
-            return '';
-        }
-        this.token = res.data.token;
-        return this.token;
-    }
 
     /**
      *
@@ -189,10 +167,6 @@ class Server {
             url: 'http://localhost:5000/events',
             headers: {
                 'Content-Type': 'application/json'
-            },
-            auth: {
-                username: 'alon@gmail.com',
-                password: 'azor'
             },
             data: payload
         }
@@ -246,10 +220,6 @@ class Server {
             url: 'http://localhost:5000/events/'+id,
             headers: {
                 'Content-Type': 'application/json'
-            },
-            auth: {
-                username: 'alon@gmail.com',
-                password: 'azor'
             },
             data: payload
         }

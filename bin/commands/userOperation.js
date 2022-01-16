@@ -1,6 +1,45 @@
 const {MessageTypes} = require("whatsapp-web.js");
 const Server = require("../Server");
+/*
+need to be added to whatsapp-web.js/src/structures/Chat.js:
+    async fetchMessagesUntil(limitMsg){
+        if (!limitMsg) {
+            return;
+        }
+        let messages = await this.client.pupPage.evaluate(async (chatId, limitMsg) => {
+            const msgFilter = m => !m.isNotification; // dont include notification messages
+            const msgIsInArray = (array, msg)=>{
+                for (let i =0; i<array.length; i++){
+                    if (array[i].id && array[i].id.id === msg.id.id){
+                        return true;
+                    }
+                }
+                return false;
+            }
 
+            const chat = window.Store.Chat.get(chatId);
+            let msgs = chat.msgs.models;
+            let running = true;
+            if (msgIsInArray(msgs, limitMsg)){
+                running = false;
+            }
+            msgs = msgs.filter(msgFilter);
+
+            while (running) {
+                const loadedMessages = await chat.loadEarlierMsgs();
+                if (!loadedMessages) break;
+                if(msgIsInArray(loadedMessages, limitMsg)){
+                    running = false;
+                }
+                msgs = [...loadedMessages.filter(msgFilter), ...msgs];
+            }
+            msgs.sort((a, b) => (a.t < b.t) ? 1 : -1);
+            return msgs.map(m => window.WWebJS.getMessageModel(m));
+
+        }, this.id._serialized, limitMsg);
+        return messages.map(m => new Message(this.client, m));
+    }
+ */
 
 /**
  *
